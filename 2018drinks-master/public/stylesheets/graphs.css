@@ -1,0 +1,20 @@
+
+g.path.tally path {
+    stroke: rgba(151,187,205,1);
+    fill : none;
+    stroke-width: 5;
+}
+
+g.path.benchmark path {
+    stroke: none;
+    fill : rgba(220,220,220,0.5);
+}
+
+g.x-ticks path {
+    stroke-width: 1;
+}
+
+g.x-ticks, g.y-ticks {
+    stroke: #B0B0B0;
+    stroke-width: 1;
+}

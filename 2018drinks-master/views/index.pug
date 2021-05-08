@@ -1,0 +1,91 @@
+extends layout
+
+block content
+  style.
+    #percentage { height: 30px; background: black; margin-bottom: 2px; border-radius: 5px; overflow: hidden; }
+    #percentage-inner { width: #{totals.drinks / 20.13}%; background: #090; height: 30px; margin-bottom: -30px; }
+    #percentage-needtomeet { width: #{(Date.now() - START_TIME) / (END_TIME - START_TIME) * 100}%; background: rgba(0, 153, 0, 0.3); height: 30px; border-right: 2px solid #0c0; }
+
+    #faculpercentage { height: 30px; background: black; margin-bottom: 2px; border-radius: 5px; overflow: hidden; }
+
+  script.
+    setInterval(function () {
+      $.get('/', function(data) {
+        console.log('updated at', new Date());
+        $('#infomatics').replaceWith($($.parseHTML(data)).find('#infomatics'));
+      });
+    }, 5000);
+
+  div.drink-toggle.closed
+    if isActiveStudent
+      .btn.btn-large.btn-success.input-block-level(style="margin-bottom: 20px; font-style: italic;", onclick="$('.drink-toggle').toggleClass('closed').toggleClass('open')") Log a drink
+      form.form-horizontal.well(action="/api/drinks?redirect=/", method="post")
+        div.control-group
+          label.control-label Drink:
+          .controls
+            select.input-block-level(name="drink")
+              option(checked, value="Beer") Beer
+              option(checked, value="Wine") Wine
+              option(checked, value="Shot") Shot
+              option(checked, value="Mixed Drink") Mixed Drink
+        div.control-group
+          label.control-label Details:
+          .controls
+            input.input-block-level(type="text", name="details", placeholder="Details (optional)")
+        div.control-group#drinkrow
+          label.control-label Log drinks:
+          .controls
+            button.btn.btn-success#servings(name="servings", value="1")
+              |+1
+              i.icon-glass.icon-white
+            button.btn.btn-success#servings(name="servings", value="2")
+              |+2
+              i.icon-glass.icon-white
+            button.btn.btn-success#servings(name="servings", value="3")
+              |+3
+              i.icon-glass.icon-white
+            button.btn.btn-success#servings(name="servings", value="4")
+              |+4
+              i.icon-glass.icon-white
+
+  br
+
+  div#infomatics
+    div#totals(style="text-align: center")
+      div(style="height: 30px; margin-bottom: -30px; color: white; line-height: 30px; vertical-align: middle; font-size: 16px;")
+        | #{totals.drinks} servings down.
+        b  #{year - totals.drinks} to go!
+
+      #percentage
+        #percentage-inner
+        #percentage-needtomeet
+
+      p(style="font-size: 12px; margin-top: 0; text-align: center; margin-bottom: 20px; margin-top: 5px; line-height: 14px")
+        | Each person using Drinkalytics needs to avg #{averageneeded.toFixed(2)} servings a day to win.
+        br
+        | The current average per person per day is #{(totals.drinks / stats.length / ((Date.now() - START_TIME) / (24*60*60*1000))).toFixed(2)}.
+
+    p.text-center.alert.alert-info
+      b
+        a(href="/stats") Drinkalytics statistics and graphs!
+
+    table.table.table-bordered.table-striped(style="width: 100%")
+      thead
+        tr
+          th
+            b Name
+          th
+            b Total Servings
+      tbody
+        each stat, i in stats
+          tr(class=(stat.id == student ? "yourself" : '') + ' ' + (Date.now() - (stat.dranks[stat.dranks.length - 1] || {}).date < 1000*60*(30) ? 'recent' : ''))
+            td
+              = (i + 1) + '. '
+              a(href="/drinks/?student=" + stat.id, style=(stat.drinks / ((Date.now() - START_TIME) / (24*60*60*1000))) > averageneeded ? "font-weight: bold" : "")
+                != (i == 0 ? '&#x2654; ' : '') + nameify(stat.id)
+              small(style="font-size: 10px; display: block; line-height: 12px; padding-left: 1.6em")
+                | Avg #{(stat.drinks / ((Date.now() - START_TIME) / (24*60*60*1000))).toFixed(3)} servings / day
+            td
+              span(style="font-size: 18px; line-height: 30px")= stat.drinks
+              if stat.dranks.length
+                small(style="color: #999; padding-left: 10px;")= humanize.relativeTime(stat.dranks[stat.dranks.length - 1].date / 1000)

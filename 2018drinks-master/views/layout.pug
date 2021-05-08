@@ -1,0 +1,72 @@
+doctype html
+html
+  head
+    title= title
+    meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1")
+
+    link(href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css", rel="stylesheet")
+    link(rel="stylesheet", href="https://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css")
+    link(rel="stylesheet", href="/stylesheets/graphs.css")
+    script(src='https://code.jquery.com/jquery.min.js')
+    script(src="https://code.jquery.com/jquery-1.9.1.js")
+    script(src="https://code.jquery.com/ui/1.10.1/jquery-ui.js")
+    script(src="/javascripts/humanize.js")
+    script(src='/javascripts/d3.min.js')
+    script(src='/javascripts/underscore-min.js')
+    script(src='/javascripts/Chart.min.js')
+    script(src='/javascripts/script.js')
+
+    link(href='https://fonts.googleapis.com/css?family=Graduate', rel='stylesheet', type='text/css')
+
+    script.
+      addEventListener("load", function () { setTimeout(hideURLbar, 0); }, false);
+      function hideURLbar () {
+        window.scrollTo(0,1);
+      }
+
+    style.
+      .container-fluid { max-width: 600px; margin: 0 auto; }
+
+      .btn {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-userstu-select: none;
+        user-select: none;
+      }
+
+      h1 { font-family: 'Graduate', cursive; font-size: 30px; }
+
+      #login { font-size: 12px; text-align: center; }
+      @media (min-width: 500px) {
+        #login { float: right; line-height: 40px; }
+      }
+      @media (max-width: 499px) {
+        h1 { text-align: center; }
+        #login { border-bottom: 1px solid black; color: white; background: #666; padding: 4px 5px; margin: 0 -20px; }
+        #drinkcount td { padding: 2px 4px !important; }
+      }
+
+      #drinkrow .btn {
+        width: 22%;
+        margin: 0 2px;
+      }
+
+      .drink-toggle.closed .form-horizontal { display: none; }
+      .drink-toggle.open .btn-large { display: none; }
+
+      tr.yourself > td { background: #bfb !important }
+      tr.recent > td { background: #ffb !important }
+
+  body
+    .container-fluid
+      div
+        div#login
+          b #{user || student}
+          |  &nbsp;
+          a.btn.btn-danger.btn-mini(href="/logout/") Logout?
+        h1
+          a(href="/") Drinkalytics
+
+      block content

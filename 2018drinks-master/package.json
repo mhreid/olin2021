@@ -1,0 +1,32 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "engines": {
+    "node": "0.12.x",
+    "npm": "2.14.x"
+  },
+  "dependencies": {
+    "agentkeepalive": "^2.1.1",
+    "body-parser": "^1.15.0",
+    "connect-mongo": "^2.0.1",
+    "connect-mongostore": "^0.1.4",
+    "cookie-parser": "^1.4.1",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "humanize": "0.0.7",
+    "jade": "*",
+    "method-override": "^2.3.5",
+    "moment-timezone": "^0.5.13",
+    "mongojs": "^2.2.19",
+    "morgan": "^1.7.0",
+    "ntlm": "^0.1.1",
+    "pug": "^2.0.3",
+    "request": "~2.85.0",
+    "serve-favicon": "^2.3.0",
+    "xml2js": "^0.4.16"
+  }
+}

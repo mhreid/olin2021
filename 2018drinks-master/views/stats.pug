@@ -1,0 +1,86 @@
+extends layout
+
+block content
+  h3 Burn-Rate Chart
+  div.chart#burn-rate
+
+  h3 When are we drinking?
+  canvas.chart#time-of-day(width="600", height="300")
+
+  h3 What are we drinking?
+  canvas.chart#type-of-drink(width="600", height="300")
+
+  script(src="/javascripts/graphs.js")
+  script.
+
+    var timeOfDayCtx = $(".chart#time-of-day").get(0).getContext("2d");
+    var timeOfDayChart;
+
+    var drinkTypeCtx = $(".chart#type-of-drink").get(0).getContext("2d");
+    var drinkTypeChart;
+
+    $.getJSON("/api/drinks/", function(drinks) {
+
+      timeOfDayChart = new Chart(timeOfDayCtx).Bar({
+        labels : getTimeRanges(),
+        datasets : [
+          {
+            fillColor : "rgba(151,187,205,0.5)",
+            strokeColor : "rgba(151,187,205,1)",
+            data : timePdf(drinks)          
+          }
+        ]
+      });
+
+      var hist = drinkTypeHist(drinks);
+      drinkTypeChart = new Chart(drinkTypeCtx).Bar({
+        labels : _.keys(hist),
+        datasets : [
+          {
+            fillColor : "rgba(151,187,205,0.5)",
+            strokeColor : "rgba(151,187,205,1)",
+            data : _.values(hist)
+          }
+        ]
+      });
+
+    });
+
+    function timePdf(drinks) {
+      var drinkHours = _.map(drinks, function(drink) {
+        return new Date(drink.date).getHours();
+      });
+
+      var drinkHoursHist = {};
+      _.each(drinkHours, function(drinkHour) {
+        var prevValue = _.has(drinkHoursHist, drinkHour) ? drinkHoursHist[drinkHour] : 0;
+        drinkHoursHist[drinkHour] = prevValue + 1;
+      });
+
+      return _.map(_.range(0,24), function(hour) {
+        var prob = _.has(drinkHoursHist, hour) ? drinkHoursHist[hour]/drinkHours.length : 0;
+        return prob;
+      });
+    }
+
+    function getTimeRanges() {
+      var ranges = ["12 AM"];
+      ranges = _.union(ranges, _.map(_.range(1, 12), function(hour) {
+        return hour + " AM";      
+      }));
+      ranges.push("12 PM");
+      ranges = _.union(ranges, _.map(_.range(1, 12), function(hour) {
+        return hour + " PM";      
+      }));
+      return ranges;
+    }
+
+    function drinkTypeHist(drinks) {
+      var hist = {};
+      _.each(drinks, function(drink) {
+        var prevValue = _.has(hist, drink.drink) ? hist[drink.drink] : 0;
+        hist[drink.drink] = prevValue + 1;
+      });
+      return hist;
+    }
+

@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  style.
+    blockquote { margin-top: 20px; }
+    @media (max-width: 499px) {
+      blockquote { margin-top: 10px; }
+      blockquote p { font-size: 11px; line-height: 13px; }
+    }
+
+  if drinks.map(function (a) { return a.details; }).filter(function (a) { return a; })
+    blockquote(style="font-style: italic")
+      p= drinks.map(function (a) { return a.details; }).filter(function (a) { return a; }).join(', ')
+        | .
+
+  table.table.table-bordered.table-striped#drinkcount(style="width: 100%; font-size: 12px;")
+    thead
+      tr
+        th
+        th Name
+        th When
+        th Type
+        th Details
+    tbody
+      each drink, i in drinks.reverse()
+        tr
+          td= '#' + (drinks.length - i)
+          td(style="font-weight: bold")= nameify(drink.student)
+          td= humanize.relativeTime(drink.date / 1000)
+          td= drink.drink + ' (x' + (drink.servings || 1) + ')'
+          td= drink.details
